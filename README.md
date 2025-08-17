@@ -11,11 +11,11 @@ Deployed an Azure App Service (`iamdemoapp123`) with no database.
 
 ### 2. Baseline – New User
 Created **labuser@bricewoodardgmail.onmicrosoft.com** with no roles assigned.  
-![Labuser No Roles](screenshots/02-labuser-no-roles.png)
+![Labuser No Roles](screenshots/02-no-roles.png)
 
 ### 3. Misconfigured Permissions
 Assigned **Owner** at the subscription level. Labuser could see and access resources.  
-![Labuser Owner Role](screenshots/03-labuser-owner-role.png)
+![Labuser Owner Role](screenshots/03-owner-role.png)
 
 ### 4. Fix – Least Privilege
 Removed Owner and scoped **Storage Blob Data Reader** only to the `iamdemoaccount123` storage account.  
