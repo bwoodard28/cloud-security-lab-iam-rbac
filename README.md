@@ -1,39 +1,49 @@
 # Azure IAM Demo: Role-Based Access Control (RBAC)
 
-This project demonstrates how Azure RBAC controls access to resources.  
-We created a restricted user (`labuser`), then assigned and scoped roles to show how permissions change in real time.
+This project demonstrates how Azure RBAC affects access to resources.  
+We created a restricted user (`labuser`) and tested **two scenarios**:
+
+1. **Over-permissioned (Owner role)**  
+2. **Scoped / Least Privilege (Storage Blob Data Reader)**  
 
 ---
 
-## Steps & Screenshots
-
-### 1. No Roles Assigned
-`labuser` has no roles → cannot view or manage resources.  
+## 1. Starting Point
+`labuser` initially has no roles.  
 ![No roles](screenshots/00-no-roles.png)
 
-### 2. Role Check (Before)
-Attempting to list storage accounts fails.  
-![AZ List Before](screenshots/04-az-list-before.png)
+---
 
-### 3. Role Scoped
-Applying a scoped role assignment.  
-![Role Scoped](screenshots/05-role-scoped.png)
+## 2. Over-Permissioned Example
+Assigning `Owner` role at the subscription scope → `labuser` can manage everything.  
+- **Role assignment**  
+![Owner Role Assignment](screenshots/03-role-assignment-owner.png)  
+- **Full access confirmed**  
+![Owner Success](screenshots/06-owner-success.png)  
 
-### 4. Owner Success
-With Owner assigned at subscription scope, `labuser` can now manage resources.  
-![Owner Success](screenshots/06-owner-success.png)
+⚠️ *This demonstrates the risk of assigning broad roles unnecessarily.*  
 
-### 5. List Denied
-After restricting scope, `labuser` cannot list accounts.  
-![List Denied](screenshots/07-list-denied.png)
+---
 
-### 6. Blob Success
-With correct scoped permissions, `labuser` can access blobs in the storage account.  
-![Blob Success](screenshots/08-blob-success.png)
+## 3. Least Privilege Example
+Instead, assign a scoped **Storage Blob Data Reader** role on just the storage account.  
+- **Scoped role assignment**  
+![Role Scoped](screenshots/05-role-scoped.png)  
+
+---
+
+## 4. Results of Least Privilege
+- Listing storage accounts still fails at subscription level:  
+![List Denied](screenshots/07-list-denied.png)  
+
+- But blob access inside the assigned storage account succeeds:  
+![Blob Success](screenshots/08-blob-success.png)  
+
+✅ *This demonstrates proper least-privilege access.*  
 
 ---
 
 ## Key Takeaways
-- Azure RBAC lets you scope permissions from subscription → resource group → resource.  
-- Missing or restricted roles cause **AuthorizationFailed** errors.  
-- Scoped roles enforce least privilege, limiting actions to only what’s required.  
+- Broad “Owner” assignments give users full control and break security principles.  
+- Scoped roles enforce least privilege, reducing risk.  
+- Authorization failures are expected and prove RBAC is working correctly.
