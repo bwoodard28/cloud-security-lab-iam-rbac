@@ -1,37 +1,63 @@
-# Lab 01 – Identity & Access Control (Azure IAM)
+# Azure IAM Demo: Role-Based Access Control (RBAC)
 
-## Goal
-Show how identity misconfigurations in Azure can lead to excessive permissions, and how to fix them with least privilege.
+This project demonstrates how Azure RBAC controls access to resources.  
+We create a user (`labuser`), assign and remove roles, and observe how permissions affect actions.
 
-## Steps
+---
 
-### 1. Deploy Web App
-Deployed an Azure App Service (`iamdemoapp123`) with no database.  
+## Steps & Screenshots
+
+### 1. No Roles Assigned
+User has no roles → cannot view or manage resources.
+![No roles](screenshots/00-no-roles.png)
+
+### 2. App Service Overview
+Overview of the sample app deployed in Azure.
 ![App Service Overview](screenshots/01-app-service-overview.png)
 
-### 2. Baseline – New User
-Created **labuser@bricewoodardgmail.onmicrosoft.com** with no roles assigned.  
-![Labuser No Roles](screenshots/02-no-roles.png)
+### 3. App Running
+Confirm the app is deployed and accessible.
+![App Running](screenshots/02-app-running.png)
 
-### 3. Misconfigured Permissions
-Assigned **Owner** at the subscription level. Labuser could see and access resources.  
-![Labuser Owner Role](screenshots/03-owner-role.png)
+### 4. Role Assignment: Owner
+Assigning the **Owner** role to the lab user.
+![Role Assignment Owner](screenshots/03-role-assignment-owner.png)
 
-### 4. Fix – Least Privilege
-Removed Owner and scoped **Storage Blob Data Reader** only to the `iamdemoaccount123` storage account.  
-![Scoped Blob Role](screenshots/04-storage-blob-role.png)
+### 5. Role Check (Before)
+Listing storage accounts before scoped roles are applied.
+![AZ List Before](screenshots/04-az-list-before.png)
 
-### 5. Validation
-Tried listing blobs without permission → failed.  
-![Access Denied](screenshots/05-access-denied.png)
+### 6. Role Scoped
+Applying a scoped role assignment.
+![Role Scoped](screenshots/05-role-scoped.png)
 
-Re-ran with correct role → success.  
-![Access Granted](screenshots/06-access-granted.png)
+### 7. Owner Success
+Owner role now allows management operations.
+![Owner Success](screenshots/06-owner-success.png)
+
+### 8. List Denied
+With restricted scope, listing accounts fails as expected.
+![List Denied](screenshots/07-list-denied.png)
+
+### 9. Blob Success
+With correct scoped permissions, blob operations succeed.
+![Blob Success](screenshots/08-blob-success.png)
 
 ---
 
 ## Key Takeaways
-- Identity is the #1 attack vector in cloud security.  
-- Subscription-level Owner = dangerous.  
-- Always scope roles to the **smallest resource needed** (least privilege).  
-- Validated principle of **deny by default → allow only what’s required**.
+- Azure RBAC lets you scope permissions from subscription → resource group → resource.
+- Misconfigured or missing roles cause **AuthorizationFailed** errors.
+- Scoped roles enforce least privilege, limiting actions to only what’s required.
+
+---
+
+## How to Reproduce
+1. Create a new Azure AD user (`labuser`).
+2. Deploy a test resource (App Service + Storage Account).
+3. Assign/remove roles at subscription or resource level.
+4. Verify access using Azure CLI commands:
+   ```bash
+   az login --username labuser@<yourtenant>.onmicrosoft.com
+   az storage account list -o table
+   az storage blob list --account-name iamdemoaccount123 --container-name <container>
